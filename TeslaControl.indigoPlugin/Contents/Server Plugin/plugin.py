@@ -2,6 +2,14 @@
 # -*- coding: utf-8 -*-
 ####################
 # Tesla Control plugin for indigo
+#
+# This plugin was written and published by Gregg Glockner
+# https://github.com/gglockner/indigo-teslacontrol
+# https://github.com/gglockner/teslajson
+#
+# No updates to the plugin have been made in over 12 months, including no provision of data/states from the vehicle,
+# so i've taken it on and developed it further.
+#
 # Based on sample code that is:
 # Copyright (c) 2014, Perceptive Automation, LLC. All rights reserved.
 # http://www.indigodomo.com
@@ -21,10 +29,20 @@ class Plugin(indigo.PluginBase):
 		indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
 		self.vehicles = []
 		self.debug = True
+		
+		self.states = {}
 
 	########################################
 	def startup(self):
-		self.debugLog("Username: %s" % self.pluginPrefs['username'])
+		self.debugLog("Username: %s" % self.pluginPrefs.get("username","(Not yet saved)"))
+
+	def getDeviceStateList(self, dev): #Override state list
+		stateList = indigo.PluginBase.getDeviceStateList(self, dev)      
+		if stateList is not None:
+			for key in self.states.iterkeys():
+				dynamicState1 = self.getDeviceStateDictForStringType(key, key, key)
+				stateList.append(dynamicState1)
+		return stateList
 
 	def getVehicles(self):
 		if not self.vehicles:
@@ -71,6 +89,16 @@ class Plugin(indigo.PluginBase):
 		statusName = action.pluginTypeId
 		indigo.server.log("Tesla request %s for vehicle %s" % (statusName, vehicleId))
 		vehicle = self.getVehicles()[vehicleId]
-		data = action.props
-		response = vehicle.data_request(statusName, data)
+		#data = action.props
+		response = vehicle.data_request(statusName)
 		self.debugLog(str(response))
+		for k,v in response.items():
+			self.states[k] = v
+			dev.stateListOrDisplayStateIdChanged()
+			if k in dev.states:
+				dev.updateStateOnServer(k,v)
+			else:
+				self.debugLog("Not found: %s" % str(k))
+			if (k == dev.ownerProps.get("stateToDisplay","")):
+				dev.updateStateOnServer("displayState",v)
+

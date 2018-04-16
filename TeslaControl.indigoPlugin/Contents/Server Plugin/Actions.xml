@@ -97,4 +97,20 @@
 		<Name>Get Charge State</Name>
 		<CallbackMethod>vehicleStatus</CallbackMethod>
 	</Action>
+	<Action id="climate_state" deviceFilter="self">
+		<Name>Get Climate State</Name>
+		<CallbackMethod>vehicleStatus</CallbackMethod>
+	</Action>
+	<Action id="drive_state" deviceFilter="self">
+		<Name>Get Drive State</Name>
+		<CallbackMethod>vehicleStatus</CallbackMethod>
+	</Action>
+	<Action id="vehicle_state" deviceFilter="self">
+		<Name>Get Vehicle State</Name>
+		<CallbackMethod>vehicleStatus</CallbackMethod>
+	</Action>
+	<Action id="gui_settings" deviceFilter="self">
+		<Name>Get GUI Settings</Name>
+		<CallbackMethod>vehicleStatus</CallbackMethod>
+	</Action>
 </Actions>
