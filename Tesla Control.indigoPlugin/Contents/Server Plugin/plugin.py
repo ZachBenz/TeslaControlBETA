@@ -65,3 +65,12 @@ class Plugin(indigo.PluginBase):
 			return
 		data = action.props
 		vehicle.command(commandName, data)
+
+	def vehicleStatus(self, action, dev):
+		vehicleId = dev.pluginProps['car']
+		statusName = action.pluginTypeId
+		indigo.server.log("Tesla request %s for vehicle %s" % (statusName, vehicleId))
+		vehicle = self.getVehicles()[vehicleId]
+		data = action.props
+		response = vehicle.data_request(statusName, data)
+		self.debugLog(str(response))

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Devices>
 	<Device type="custom" id="teslacontrol">
-		<Name>Tesla Control Module</Name>
+		<Name>Tesla Vehicle</Name>
 		<ConfigUI>
 			<Field type="menu" id="car">
 				<Label>Car:</Label>
@@ -9,5 +9,151 @@
 				<List class="self" filter="self" method="carListGenerator" />
 			</Field>
 		</ConfigUI>
+		<States>
+			<State id="mobileAccess">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>Mobile Access</TriggerLabel>
+				<ControlPageLabel>Mobile Access</ControlPageLabel>
+			</State>
+			<State id="charging_state">
+				<ValueType>String</ValueType>
+				<TriggerLabel>charging_state</TriggerLabel>
+				<ControlPageLabel>charging_state</ControlPageLabel>
+			</State>
+			<State id="charge_to_max_range">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>charge_to_max_range</TriggerLabel>
+				<ControlPageLabel>charge_to_max_range</ControlPageLabel>
+			</State>
+			<State id="max_range_charge_counter">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>max_range_charge_counter</TriggerLabel>
+				<ControlPageLabel>max_range_charge_counter</ControlPageLabel>
+			</State>
+			<State id="fast_charger_present">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>fast_charger_present</TriggerLabel>
+				<ControlPageLabel>fast_charger_present</ControlPageLabel>
+			</State>
+			<State id="battery_range">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>battery_range</TriggerLabel>
+				<ControlPageLabel>battery_range</ControlPageLabel>
+			</State>
+			<State id="est_battery_range">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>est_battery_range</TriggerLabel>
+				<ControlPageLabel>est_battery_range</ControlPageLabel>
+			</State>
+			<State id="ideal_battery_range">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>ideal_battery_range</TriggerLabel>
+				<ControlPageLabel>ideal_battery_range</ControlPageLabel>
+			</State>
+			<State id="battery_level">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>battery_level</TriggerLabel>
+				<ControlPageLabel>battery_level</ControlPageLabel>
+			</State>
+			<State id="battery_current">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>battery_current</TriggerLabel>
+				<ControlPageLabel>battery_current</ControlPageLabel>
+			</State>
+			<State id="charge_starting_range">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charge_starting_range</TriggerLabel>
+				<ControlPageLabel>charge_starting_range</ControlPageLabel>
+			</State>
+			<State id="charge_starting_soc">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charge_starting_soc</TriggerLabel>
+				<ControlPageLabel>charge_starting_soc</ControlPageLabel>
+			</State>
+			<State id="charger_voltage">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charger_voltage</TriggerLabel>
+				<ControlPageLabel>charger_voltage</ControlPageLabel>
+			</State>
+			<State id="charger_pilot_current">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charger_pilot_current</TriggerLabel>
+				<ControlPageLabel>charger_pilot_current</ControlPageLabel>
+			</State>
+			<State id="charger_actual_current">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charger_actual_current</TriggerLabel>
+				<ControlPageLabel>charger_actual_current</ControlPageLabel>
+			</State>
+			<State id="charger_power">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charger_power</TriggerLabel>
+				<ControlPageLabel>charger_power</ControlPageLabel>
+			</State>
+			<State id="time_to_full_charge">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>time_to_full_charge</TriggerLabel>
+				<ControlPageLabel>time_to_full_charge</ControlPageLabel>
+			</State>
+			<State id="charge_rate">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>charge_rate</TriggerLabel>
+				<ControlPageLabel>charge_rate</ControlPageLabel>
+			</State>
+			<State id="charge_port_door_open">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>charge_port_door_open"</TriggerLabel>
+				<ControlPageLabel>charge_port_door_open"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="inside_temp">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>inside_temp"</TriggerLabel>
+				<ControlPageLabel>inside_temp"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="driver_temp_setting">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>driver_temp_setting"</TriggerLabel>
+				<ControlPageLabel>driver_temp_setting"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="passenger_temp_setting">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>passenger_temp_setting"</TriggerLabel>
+				<ControlPageLabel>passenger_temp_setting"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="is_auto_conditioning_on">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>is_auto_conditioning_on"</TriggerLabel>
+				<ControlPageLabel>is_auto_conditioning_on"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="is_front_defroster_on">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>is_front_defroster_on"</TriggerLabel>
+				<ControlPageLabel>is_front_defroster_on"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="is_rear_defroster_on">
+				<ValueType>Boolean</ValueType>
+				<TriggerLabel>is_rear_defroster_on"</TriggerLabel>
+				<ControlPageLabel>is_rear_defroster_on"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="fan_status">
+				<ValueType>Number</ValueType>
+				<TriggerLabel>fan_status"</TriggerLabel>
+				<ControlPageLabel>fan_status"</ControlPageLabel>
+			</State>
+		</States>
+			<State id="charge_port_door_open">
+				<ValueType>String</ValueType>
+				<TriggerLabel>charge_port_door_open"</TriggerLabel>
+				<ControlPageLabel>charge_port_door_open"</ControlPageLabel>
+			</State>
+		</States>
+		<UiDisplayStateId>battery_level</UiDisplayStateId>
 	</Device>
 </Devices>

@@ -4,6 +4,7 @@
 		<Name>Wake Car</Name>
 		<CallbackMethod>vehicleCommand</CallbackMethod>
 	</Action>
+	<Action id="sep1"/>
 	<Action id="set_valet_mode" deviceFilter="self">
 		<Name>Set Valet Mode</Name>
 		<ConfigUI>
@@ -90,5 +91,10 @@
 				</List>
 			</Field>
 		</ConfigUI>
+	</Action>
+	<Action id="sep2"/>
+	<Action id="charge_state" deviceFilter="self">
+		<Name>Get Charge State</Name>
+		<CallbackMethod>vehicleStatus</CallbackMethod>
 	</Action>
 </Actions>
