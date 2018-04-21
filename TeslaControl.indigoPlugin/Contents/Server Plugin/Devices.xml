@@ -8,13 +8,16 @@
 				<!-- see http://wiki.indigodomo.com/doku.php?id=indigo_5_documentation:plugin_guide#dynamic_lists -->
 				<List class="self" filter="self" method="carListGenerator" />
 			</Field>
-			<Field id="stateToDisplay" type="textfield">
+			<Field id="lstateToDisplay" type="label">
+				<Label>"State to display" allows you to choose which of the many Tesla device states to use as the UI device state. The default is the battery level state, but you may prefer the remaining miles or current temperature for example.</Label>
+			</Field>
+			<Field id="stateToDisplay" type="textfield" defaultValue="battery_level">
 				<Label>State to display:</Label>
 			</Field>
-			<Field id="latLongHome" type="textfield">
+			<Field id="latLongHome" type="textfield" defaultValue="37.394838,-122.150389">
 				<Label>Lat,Long of Home Address:</Label>
 			</Field>
-			<Field id="latLongWork" type="textfield">
+			<Field id="latLongWork" type="textfield" defaultValue="37.331820,-122.03118">
 				<Label>Lat,Long of Work Address:</Label>
 			</Field>
 		</ConfigUI>

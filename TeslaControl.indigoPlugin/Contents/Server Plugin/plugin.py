@@ -37,8 +37,10 @@ class Plugin(indigo.PluginBase):
 		self.states = {}
 		
 	########################################
-	def startup(self):
-		self.debugLog("Username: %s" % self.pluginPrefs.get("username","(Not yet saved)"))
+	#def startup(self):
+		#self.debugLog("Username: %s" % self.pluginPrefs.get("username","(Not yet saved)"))
+		#self.debugLog("Username: %s" % self.un)
+		#self.getVehicles()
 
 	def getDeviceStateList(self, dev): #Override state list
 		stateList = indigo.PluginBase.getDeviceStateList(self, dev)      
@@ -50,6 +52,7 @@ class Plugin(indigo.PluginBase):
 
 	def getVehicles(self):
 		if not self.vehicles:
+			indigo.server.log("Fetching vehicles...")
 			connection = teslajson.Connection(self.pluginPrefs['username'],
 											  self.pluginPrefs['password'])
 			self.vehicles = dict((unicode(v['id']),v) for v in connection.vehicles)
@@ -63,6 +66,13 @@ class Plugin(indigo.PluginBase):
 		self.debugLog("carListGenerator: %s" % str(cars))
 		return cars
 
+	def closedDeviceConfigUi(self, valuesDict, userCancelled, typeId, devId):
+		self.debugLog("Device ID: %s" % devId)		
+		vehicleId = valuesDict['car']
+		statusName="doRefresh"
+		self.vehicleStatus2(statusName,vehicleId,devId)
+		return True
+		
 	### ACTIONS
 	def validateActionConfigUi(self, valuesDict, typeId, actionId):
 		if typeId=='set_charge_limit':
@@ -95,6 +105,8 @@ class Plugin(indigo.PluginBase):
 			self.debugLog(response)
 			if (response["response"]["reason"] in validReasons) or response["response"]["result"] == True:
 				self.debugLog("Success")
+				action.pluginTypeId = "doRefresh"
+				self.vehicleStatus(action,dev)
 				break
 			if i >= 5:
 				self.debugLog("Failed")
@@ -102,28 +114,33 @@ class Plugin(indigo.PluginBase):
 				break
 			i= i+1
 			time.sleep(10)
-			
 
 	def vehicleStatus(self, action, dev):
 		vehicleId = dev.pluginProps['car']
 		statusName = action.pluginTypeId
+		#self.debugLog(str(dev))
+		self.vehicleStatus2(statusName,vehicleId,dev.id)
+		
+	def vehicleStatus2(self,statusName,vehicleId,devId):
 		indigo.server.log("Tesla request %s for vehicle %s" % (statusName, vehicleId))
 		vehicle = self.getVehicles()[vehicleId]
+		dev = indigo.devices[devId]
 		
 		self.debugLog(statusName)
 		
 		if (statusName == "doRefresh"):
-			action.pluginTypeId = "charge_state"
-			self.vehicleStatus(action,dev)
-			action.pluginTypeId = "drive_state"
-			self.vehicleStatus(action,dev)
-			action.pluginTypeId = "charge_state"
-			self.vehicleStatus(action,dev)
+			action = "charge_state"
+			self.vehicleStatus2(action,vehicleId,devId)
+			action= "drive_state"
+			self.vehicleStatus2(action,vehicleId,devId)
+			action = "climate_state"
+			self.vehicleStatus2(action,vehicleId,devId)
 			return
 		
 		response = vehicle.data_request(statusName)
 		self.debugLog(str(response))
 		for k,v in response.items():
+			self.debugLog("State %s, value %s" % (k,v))
 			self.states[k] = v
 			dev.stateListOrDisplayStateIdChanged()
 			if k in dev.states:
@@ -165,3 +182,16 @@ class Plugin(indigo.PluginBase):
 		#self.debugLog(u"Should be: 278.546 km")
 		return distance
 	
+#	def runConcurrentThread(self):
+#		try:
+#			while True:
+#				for v in indigo.devices.iter("self.teslacontrol"):
+#					if len(v.states) <10:
+#						anAction = action()
+#						action.pluginTypeId = "doRefresh"
+#						self.vehicleStatus(action,dev)
+#				# Do your stuff here
+#				self.sleep(60) # in seconds
+#		except self.StopThread:
+#			# do any cleanup here
+#			pass
