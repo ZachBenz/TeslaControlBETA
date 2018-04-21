@@ -17,6 +17,8 @@
 import indigo
 import teslajson
 
+import time
+
 from math import sin, cos, sqrt, atan2, radians
 
 ## TODO
@@ -81,30 +83,44 @@ class Plugin(indigo.PluginBase):
 		indigo.server.log("Tesla command %s for vehicle %s" % (commandName, vehicleId))
 		vehicle = self.getVehicles()[vehicleId]
 		if commandName == "wake_up":
-			vehicle.wake_up()
+			response = vehicle.wake_up()
+			self.debugLog(response)
 			return
 		data = action.props
-		vehicle.command(commandName, data)
+		#self.debugLog(data)
+		i = 0
+		validReasons = ["already on", "already off",""]
+		while True:
+			response = vehicle.command(commandName, data)
+			self.debugLog(response)
+			if (response["response"]["reason"] in validReasons) or response["response"]["result"] == True:
+				self.debugLog("Success")
+				break
+			if i >= 5:
+				self.debugLog("Failed")
+				indigo.server.log(u"%s failed after 5 attempts" % commandName)
+				break
+			i= i+1
+			time.sleep(10)
+			
 
 	def vehicleStatus(self, action, dev):
 		vehicleId = dev.pluginProps['car']
 		statusName = action.pluginTypeId
 		indigo.server.log("Tesla request %s for vehicle %s" % (statusName, vehicleId))
 		vehicle = self.getVehicles()[vehicleId]
-		#dev.stateListOrDisplayStateIdChanged()
-		#self.latLongHome = dev.ownerProps.get("latLongHome","37.394838,-122.150389").split(",")
-		#self.latLongWork = dev.ownerProps.get("latLongWork","37.331820,-122.03118").split(",")
-		#vLat = 53.862013
-		#vLong = -1.929443
-		#fromHomeKm = self.getDistance(vLat,vLong,float(self.latLongHome[0]),float(self.latLongHome[1]))
-		#fromWorkKm = self.getDistance(vLat,vLong,float(self.latLongWork[0]),float(self.latLongWork[1]))
-		#fromHomeM = fromHomeKm * 0.62137119223733
-		#fromWorkM = fromWorkKm * 0.62137119223733
-		#dev.updateStateOnServer("distanceFromHomeKm",round(fromHomeKm,2), uiValue=str(round(fromHomeKm,2))+"km")
-		#dev.updateStateOnServer("distanceFromWorkKm",round(fromWorkKm,2), uiValue=str(round(fromWorkKm,2))+"km")
-		#dev.updateStateOnServer("distanceFromHomeM",round(fromHomeM,2), uiValue=str(round(fromHomeM,2))+"m")
-		#dev.updateStateOnServer("distanceFromWorkM",round(fromWorkM,2), uiValue=str(round(fromWorkM,2))+"m")
-		#return
+		
+		self.debugLog(statusName)
+		
+		if (statusName == "doRefresh"):
+			action.pluginTypeId = "charge_state"
+			self.vehicleStatus(action,dev)
+			action.pluginTypeId = "drive_state"
+			self.vehicleStatus(action,dev)
+			action.pluginTypeId = "charge_state"
+			self.vehicleStatus(action,dev)
+			return
+		
 		response = vehicle.data_request(statusName)
 		self.debugLog(str(response))
 		for k,v in response.items():
@@ -132,10 +148,10 @@ class Plugin(indigo.PluginBase):
 		# approximate radius of earth in km
 		R = 6373.0
 
-		lat1 = radians(atLat)   #Where is vehicle at
-		lon1 = radians(atLong)
-		lat2 = radians(fromLat) #Where are we testing from, eg Home
-		lon2 = radians(fromLong)
+		lat1 = radians(float(atLat))   #Where is vehicle at
+		lon1 = radians(float(atLong))
+		lat2 = radians(float(fromLat)) #Where are we testing from, eg Home
+		lon2 = radians(float(fromLong))
 
 		dlon = lon2 - lon1
 		dlat = lat2 - lat1
