@@ -31,8 +31,9 @@ class Plugin(indigo.PluginBase):
 	########################################
 	def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
 		indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
+		self.debug = pluginPrefs.get("showDebugInfo", True)
 		self.vehicles = []
-		self.debug = True
+		#self.debug = True
 		
 		self.states = {}
 		
@@ -59,6 +60,14 @@ class Plugin(indigo.PluginBase):
 		self.cmdStates["auto_conditioning_start"] = "climate_state"
 		self.cmdStates["auto_conditioning_stop"] = "climate_state"
 		self.cmdStates["sun_roof_control"] = "vehicle_state"
+		self.cmdStates["actuate_trunk"] = ""
+		self.cmdStates["charge_port_door_close"] = "charge_state"
+		self.cmdStates["remote_start_drive"] = ""
+		self.cmdStates["set_sentry_mode"] = ""
+		self.cmdStates["reset_valet_pin"] = ""
+		#self.cmdStates["navigation_request"] = ""  #TODO
+		self.cmdStates["remote_seat_heater_request"] = ""
+		self.cmdStates["remote_steering_wheel_heater_request"] = ""
 		
 		
 	########################################
@@ -169,14 +178,20 @@ class Plugin(indigo.PluginBase):
 		vehicle = self.getVehicles()[vehicleId]
 		dev = indigo.devices[devId]
 		
-		self.debugLog(statusName)
+		#self.debugLog(statusName)
 		
 		if (statusName == "doRefresh"):
 			action = "charge_state"
 			self.vehicleStatus2(action,vehicleId,devId)
-			action= "drive_state"
+			action = "drive_state"
 			self.vehicleStatus2(action,vehicleId,devId)
 			action = "climate_state"
+			self.vehicleStatus2(action,vehicleId,devId)
+			action = "vehicle_state"
+			self.vehicleStatus2(action,vehicleId,devId)
+			action = "gui_settings"
+			self.vehicleStatus2(action,vehicleId,devId)
+			action = "vehicle_config"
 			self.vehicleStatus2(action,vehicleId,devId)
 			return
 		
@@ -186,26 +201,30 @@ class Plugin(indigo.PluginBase):
 		for k,v in sorted(response.items()):
 			self.debugLog("State %s, value %s, type %s" % (k,v,type(v)))
 			self.states[k] = v
-			if (k in dev.states) and (self.resetStates == False):
-				dev.updateStateOnServer(k,v)
-				if (k == dev.ownerProps.get("stateToDisplay","")):
-					dev.updateStateOnServer("displayState",v)
+			if (type(v) is dict):
+				indigo.server.log(u"Skipping state %s: JSON Dict found" % (k))
 			else:
-				self.resetStates = True #We obviously need to reset states if we've got data for one that doesn't exist
-				if (v == None):
-					self.strstates[k] = v
-				elif (type(v) is float):
-					self.numstates[k] = v
-				elif (type(v) is int):
-					self.numstates[k] = v
-				elif (type(v) is bool):
-					self.boolstates[k] = v
-				elif (type(v) is str):
-					self.strstates[k] = v
-				elif (type(v) is unicode):
-					self.strstates[k] = v
+				if (k in dev.states) and (self.resetStates == False):
+					#self.debugLog(str(type(v)))
+					dev.updateStateOnServer(k,v)
+					if (k == dev.ownerProps.get("stateToDisplay","")):
+						dev.updateStateOnServer("displayState",v)
 				else:
-					self.strstates[k] = v
+					self.resetStates = True #We obviously need to reset states if we've got data for one that doesn't exist
+					if (v == None):
+						self.strstates[k] = v
+					elif (type(v) is float):
+						self.numstates[k] = v
+					elif (type(v) is int):
+						self.numstates[k] = v
+					elif (type(v) is bool):
+						self.boolstates[k] = v
+					elif (type(v) is str):
+						self.strstates[k] = v
+					elif (type(v) is unicode):
+						self.strstates[k] = v
+					else:
+						self.strstates[k] = v
 		if (self.resetStates):
 			dev.stateListOrDisplayStateIdChanged()
 			self.resetStates = False
